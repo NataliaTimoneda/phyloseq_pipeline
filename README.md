@@ -68,6 +68,20 @@ p$data$Depth <- factor(p$data$Depth, levels=newSTorder)
 png("graph/alfa_diversity_all_depth_sample.png",height=1200,width=2000,res=150)
 p
 dev.off()
+
+
+
+physeq_elu_ger_dinos_001_abun = transform_sample_counts(physeq_elu_ger_dinos_001, function(x) x / sum(x))
+bray22 = ordinate(physeq_elu_ger_dinos_001_abun, "NMDS", "bray", weighted = TRUE)
+
+p.bray110 =plot_ordination(physeq_elu_ger_dinos_001_abun, bray22, color = "Location", title = "NMDS of Bray-Curtis distance") + geom_text(mapping = aes(label = Sampling), size = 3, vjust = 1.5)
+
+
+
+
+
+
+
 ```
 
 ## Uppset plot
