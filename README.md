@@ -71,6 +71,7 @@ dev.off()
 ```
 
 ## Uppset plot
+![upset_locations](https://user-images.githubusercontent.com/25608100/124742211-c610cc00-df1c-11eb-82a1-28b4f61600cc.png)
 
 It's a graph to visualize intersections of multiple sets compared to the traditional approaches, i.e. the Venn Diagram.
 
@@ -105,8 +106,8 @@ Variables to change:
 ```{.r}
 #Create the graph
 upset_graph<-UpSet[comb_size(combinations_upset) >= 5],comb_order = rev(order(comb_size(combinations_upset[comb_size(
-	    combinations_upset) >= 5]))),right_annotation = upset_right_annotation(combinations_upset,
-	    ylim = c(0, 800)),width = unit(ifelse(1,20), "cm") )
+	    combinations_upset) >= 120]))),right_annotation = upset_right_annotation(combinations_upset,
+	    ylim = c(0, 6000)),width = unit(ifelse(1,20), "cm") )
 
 ##Paramters of the graph
 ss_upset = set_size(combinations_upset[comb_size(combinations_upset) >= 5])
