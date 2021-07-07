@@ -1,9 +1,3 @@
----
-title: "Phyloseq pipeline"
-\author: Natàlia Timoneda
-geometry: margin=1.5cm
-output: pdf_document
----
 This pipeline contains a pipeline for a metagenomic analysis using phyloseq package from R.
 
 
