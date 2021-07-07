@@ -80,6 +80,7 @@ dev.off()
 
 It's a graph to visualize intersections of multiple sets compared to the traditional approaches, i.e. the Venn Diagram.
 
+###Prepare the data from pyloseq object
 ```{.r}
 #Delete the singeltons.
 physeq_single <- filter_taxa(physeq_object, function (x) {sum(x > 0) > 1}, prune=TRUE)
@@ -93,21 +94,23 @@ physeq_metadata <- data.frame(phyloseq::sample_data(physeq_single),
 		       )
 
 #Create the ASV's list from each group that we want show.
-ASVlist_physeq_groupA = colnames(physeq_asvtable[physeq_metadata$Variable == "A", apply(physeq_asvtable[physeq_metadata$Variable == "A",],
-                        MARGIN=2, function(x) any(x >0))])
+ASVlist_physeq_groupA = colnames(physeq_asvtable[physeq_metadata$Variable == "A", 
+			apply(physeq_asvtable[physeq_metadata$Variable == "A",], MARGIN=2, function(x) any(x >0))])
 
 #Create the data for the graph
 data_upset = list(A=ASVlist_physeq_groupA,B=ASVlist_physeq_groupB)
 
 #Calculate all combinations
 combinations_upset = make_comb_mat(data_upset)
+```
+###Create the graph
 
+Variables to change:
+* 5 <- for the minimum og interactions had to have tho show at plot.
+* ylim <- te minimum and max of the total asv by sample.
+```{.r}
 #Create the graph
-
-You have to change the number 5 for the minimum og interactions had to have tho show at plot.
-ylim <- te minimum and max of the total asv by sample.
-
-upset_graph<-UpSet[comb_size(combinations_upset) >= 5], comb_order = rev(order(comb_size(combinations_upset[comb_size(combinations_upset) >= 5]))),
+upset_graph<-UpSet[comb_size(combinations_upset) >= 5],comb_order = rev(order(comb_size(combinations_upset[comb_size(combinations_upset) >= 5]))),
             right_annotation = upset_right_annotation(combinations_upset,  ylim = c(0, 800)),width = unit(ifelse(1,20), "cm") )
 
 ##Paramters of the graph
@@ -124,5 +127,5 @@ decorate_annotation("Intersection\nsize", {
         gp = gpar(fontsize = 8, col = "#404040"), rot = 0, )
 })
 dev.off()
-
+```
 
