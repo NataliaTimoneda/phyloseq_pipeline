@@ -79,7 +79,8 @@ The input is a phyloseq onject with data normalize and delete the samples with n
 bray_phyloseq = ordinate(phyloseq_normalize, "NMDS", "bray", weighted = TRUE)
 stressplot(bray_phyloseq)
 
-p.bray =plot_ordination(phyloseq_normalize, bray_phyloseq, color = "Variable1", shape= "Variable2" title = "NMDS of Bray-Curtis distance") + geom_text(mapping = aes(label = Sampling), size = 3, vjust = 1.5)
+p.bray = plot_ordination(phyloseq_normalize, bray_phyloseq, color = "Variable1", shape= "Variable2",
+ 	 title = "NMDS of Bray-Curtis distance") + geom_text(mapping = aes(label = Sampling), size = 3, vjust = 1.5)
 ```
 
 
