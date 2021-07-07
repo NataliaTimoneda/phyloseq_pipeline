@@ -101,7 +101,7 @@ combinations_upset = make_comb_mat(data_upset)
 #### Create the graph
 
 Variables to change:
-* 5 <- minimum of interactions to show.
+* 120 <- minimum of interactions to show.
 * ylim <- te minimum and max of the total asv by sample.
 ```{.r}
 #Create the graph
