@@ -105,13 +105,13 @@ Variables to change:
 * ylim <- te minimum and max of the total asv by sample.
 ```{.r}
 #Create the graph
-upset_graph<-UpSet[comb_size(combinations_upset) >= 5],comb_order = rev(order(comb_size(combinations_upset[comb_size(
+upset_graph<-UpSet[comb_size(combinations_upset) >= 120],comb_order = rev(order(comb_size(combinations_upset[comb_size(
 	    combinations_upset) >= 120]))),right_annotation = upset_right_annotation(combinations_upset,
 	    ylim = c(0, 6000)),width = unit(ifelse(1,20), "cm") )
 
 ##Paramters of the graph
-ss_upset = set_size(combinations_upset[comb_size(combinations_upset) >= 5])
-cs_upset = comb_size(combinations_upset[comb_size(combinations_upset) >= 5])
+ss_upset = set_size(combinations_upset[comb_size(combinations_upset) >= 120])
+cs_upset = comb_size(combinations_upset[comb_size(combinations_upset) >= 120])
 od_upset = column_order(upset_graph)
 
 ##Make graph
