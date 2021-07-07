@@ -83,13 +83,6 @@ p.bray = plot_ordination(phyloseq_normalize, bray_phyloseq, color = "Variable1",
  	 title = "NMDS of Bray-Curtis distance") + geom_text(mapping = aes(label = Sampling), size = 3, vjust = 1.5)
 ```
 
-
-
-
-
-
-```
-
 ## Uppset plot
 ![upset_locations](https://user-images.githubusercontent.com/25608100/124742211-c610cc00-df1c-11eb-82a1-28b4f61600cc.png)
 
