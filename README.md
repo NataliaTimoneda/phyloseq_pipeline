@@ -68,14 +68,19 @@ p$data$Depth <- factor(p$data$Depth, levels=newSTorder)
 png("graph/alfa_diversity_all_depth_sample.png",height=1200,width=2000,res=150)
 p
 dev.off()
+```
 
+#### Beta diversity
 
+The input is a phyloseq onject with data normalize and delete the samples with no ASV's. (This happens when you select a specific taxonomy)
 
-physeq_elu_ger_dinos_001_abun = transform_sample_counts(physeq_elu_ger_dinos_001, function(x) x / sum(x))
-bray22 = ordinate(physeq_elu_ger_dinos_001_abun, "NMDS", "bray", weighted = TRUE)
+```{.r}
 
-p.bray110 =plot_ordination(physeq_elu_ger_dinos_001_abun, bray22, color = "Location", title = "NMDS of Bray-Curtis distance") + geom_text(mapping = aes(label = Sampling), size = 3, vjust = 1.5)
+bray_phyloseq = ordinate(phyloseq_normalize, "NMDS", "bray", weighted = TRUE)
+stressplot(bray_phyloseq)
 
+p.bray =plot_ordination(phyloseq_normalize, bray_phyloseq, color = "Variable1", shape= "Variable2" title = "NMDS of Bray-Curtis distance") + geom_text(mapping = aes(label = Sampling), size = 3, vjust = 1.5)
+```
 
 
 
@@ -88,7 +93,7 @@ p.bray110 =plot_ordination(physeq_elu_ger_dinos_001_abun, bray22, color = "Locat
 ![upset_locations](https://user-images.githubusercontent.com/25608100/124742211-c610cc00-df1c-11eb-82a1-28b4f61600cc.png)
 
 It's a graph to visualize intersections of multiple sets compared to the traditional approaches, i.e. the Venn Diagram.
-
+Complete inforamation: https://jokergoo.github.io/ComplexHeatmap-reference/book/upset-plot.html
 #### Prepare the data from pyloseq object
 ```{.r}
 #Delete the singeltons.
