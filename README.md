@@ -80,7 +80,7 @@ dev.off()
 
 It's a graph to visualize intersections of multiple sets compared to the traditional approaches, i.e. the Venn Diagram.
 
-### Prepare the data from pyloseq object
+#### Prepare the data from pyloseq object
 ```{.r}
 #Delete the singeltons.
 physeq_single <- filter_taxa(physeq_object, function (x) {sum(x > 0) > 1}, prune=TRUE)
@@ -103,7 +103,7 @@ data_upset = list(A=ASVlist_physeq_groupA,B=ASVlist_physeq_groupB)
 #Calculate all combinations
 combinations_upset = make_comb_mat(data_upset)
 ```
-### Create the graph
+#### Create the graph
 
 Variables to change:
 * 5 <- for the minimum og interactions had to have tho show at plot.
