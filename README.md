@@ -75,3 +75,52 @@ png("graph/alfa_diversity_all_depth_sample.png",height=1200,width=2000,res=150)
 p
 dev.off()
 ```
+
+## Uppset plot
+
+It's a graph to visualize intersections of multiple sets compared to the traditional approaches, i.e. the Venn Diagram.
+
+```{.r}
+#Delete the singeltons.
+physeq_single <- filter_taxa(physeq_object, function (x) {sum(x > 0) > 1}, prune=TRUE)
+
+#Extract the transpose ASV's table
+physeq_asvtable<-t(otu_table(physeq_single))
+
+#Extract the metadata
+physeq_metadata <- data.frame(phyloseq::sample_data(physeq_single), 
+                       check.names = FALSE
+		       )
+
+#Create the ASV's list from each group that we want show.
+ASVlist_physeq_groupA = colnames(physeq_asvtable[physeq_metadata$Variable == "A", apply(physeq_asvtable[physeq_metadata$Variable == "A",], MARGIN=2, function(x) any(x >0))])
+
+#Create the data for the graph
+data_upset = list(A=ASVlist_physeq_groupA,B=ASVlist_physeq_groupB)
+
+#Calculate all combinations
+combinations_upset = make_comb_mat(data_upset)
+
+#Create the graph
+
+You have to change the number 5 for the minimum og interactions had to have tho show at plot.
+ylim <- te minimum and max of the total asv by sample.
+
+upset_graph<-UpSet[comb_size(combinations_upset) >= 5], comb_order = rev(order(comb_size(combinations_upset[comb_size(combinations_upset) >= 5]))), right_annotation = upset_right_annotation(combinations_upset,  ylim = c(0, 800)),width = unit(ifelse(1,20), "cm") )
+
+##Paramters of the graph
+ss_upset = set_size(combinations_upset[comb_size(combinations_upset) >= 5])
+cs_upset = comb_size(combinations_upset[comb_size(combinations_upset) >= 5])
+od_upset = column_order(upset_graph)
+
+##Make graph
+png("graph/upset_graph.png",height=1200,width=2600,res=150)
+ht = draw(upset_graph)
+decorate_annotation("Intersection\nsize", {
+    grid.text(cs_upset[od_upset], x = seq_along(cs_upset), y = unit(cs_upset[od_upset], "native") + unit(4, "pt"), 
+        default.units = "native", just = c("center", "bottom"), 
+        gp = gpar(fontsize = 8, col = "#404040"), rot = 0, )
+})
+dev.off()
+
+
