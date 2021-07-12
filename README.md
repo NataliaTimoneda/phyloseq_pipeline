@@ -4,6 +4,8 @@ This pipeline contains a pipeline for a metagenomic analysis using phyloseq pack
 ## Libraries used in al pipeline
 <details><summary>All the libraries</summary>
 <p>
+	
+	
 ```{.r}
 library(ggforce)
 library(fantaxtic)
@@ -34,6 +36,7 @@ library("corrplot")
 ```
 </p>
 </details>
+
 ## Load the data
 ```{.r}
 OTUtable_file <- read.table("data/asv_table.tbl", row=1, header=TRUE,sep="\t")
