@@ -5,7 +5,6 @@ This pipeline contains a pipeline for a metagenomic analysis using phyloseq pack
 <details><summary>All the libraries</summary>
 <p>
 	
-	
 ```{.r}
 library(ggforce)
 library(fantaxtic)
@@ -49,53 +48,80 @@ TAXtable = tax_table(taxa_tmp)
 
 physeq_object  = merge_phyloseq(OTUtable,metadata,TAXtable)
 ```
-If ypu need to delete samples by the metadata. 
+If you need to delete samples by the metadata. 
 
 ```{.r}
-physeq_v2 = subset_samples(physeq, column_name != "variable")
+physeq_v2 = subset_samples(physeq_object, column_name != "variable")
 ```
 
-
 ## Alpha & Beta diversity
+
+In this example we want to compare the alpha diversity between the variable "Depth".
+In this example we compare the betadiversity and mark each sample with 3 variables.
+
+<img src="https://user-images.githubusercontent.com/25608100/125424544-a06d6c55-cfcc-462d-9c7a-789eff2d7beb.png" width="600" />
+
+<details><summary> The code</summary>
+<p>
+
 ```{.r}
-## Ordre of the depth variable
+## Ordre of the Variable
 newSTorder = c("0", "5", "10","20", "40","60", "75")
 
 ## Make the pairs comparisons, with depth variable
-compare_depth <- combn(levels(sample_data(physeq_v2)[,"Depth"]$Depth)[-9],2,
+compare_depth <- combn(levels(sample_data(physeq_object)[,"Depth"]$Depth)[-9],2,
                     simplify=FALSE)
 
 ## Alpha diversity by Depth and Sampling
-p<-plot_richness(physeq_v2, color = "Depth", x="Sampling" ) + geom_boxplot()
-p$data$Depth <- factor(p$data$Depth, levels=newSTorder)
+# If you want to add several samples in each Depth category change the variable in the parameter "x".
+
+plot<-plot_richness(physeq_object, color = "Depth", x="Depth" ) + geom_boxplot()
+plot$data$Depth <- factor(plot$data$Depth, levels=newSTorder)
 
 ## Create the plot
-png("graph/alfa_diversity_all_depth_sample.png",height=1200,width=2000,res=150)
-p
+png("graph/alfa_diversity_depth.png",height=1200,width=2000,res=150)
+plot
 dev.off()
 ```
+</p>
+</details>
 
 #### Beta diversity
 
-The input is a phyloseq onject with data normalize and delete the samples with no ASV's. (This happens when you select a specific taxonomy)
+The input is a phyloseq object with data normalize and delete the samples with no ASV's. (This happens when you select a specific taxonomy)
+
+<img src="https://user-images.githubusercontent.com/25608100/125425991-770d7280-fc86-4de0-94b0-af6561b5bde3.png" width="600" />
+
+<details><summary> The code</summary>
+<p>
+
+You can change the color and the shape of each point, and add a label.
 
 ```{.r}
-
 bray_phyloseq = ordinate(phyloseq_normalize, "NMDS", "bray", weighted = TRUE)
 stressplot(bray_phyloseq)
 
 p.bray = plot_ordination(phyloseq_normalize, bray_phyloseq, color = "Variable1", shape= "Variable2",
- 	 title = "NMDS of Bray-Curtis distance") + geom_text(mapping = aes(label = Sampling), size = 3, vjust = 1.5)
+ 	 title = "NMDS of Bray-Curtis distance") + geom_text(mapping = aes(label = Varible3 ), size = 3, vjust = 1.5)
 ```
+</p>
+</details>
 
 ## Uppset plot
-![upset_locations](https://user-images.githubusercontent.com/25608100/124742211-c610cc00-df1c-11eb-82a1-28b4f61600cc.png)
 
 It's a graph to visualize intersections of multiple sets compared to the traditional approaches, i.e. the Venn Diagram.
+
 Complete inforamation: https://jokergoo.github.io/ComplexHeatmap-reference/book/upset-plot.html
+
+![upset_locations](https://user-images.githubusercontent.com/25608100/124742211-c610cc00-df1c-11eb-82a1-28b4f61600cc.png)
+
+<details><summary> The code</summary>
+<p>
+
 #### Prepare the data from pyloseq object
 ```{.r}
-#Delete the singeltons.
+#Delete the singeltons. Delete the ASV's only have 1 sequence.
+
 physeq_single <- filter_taxa(physeq_object, function (x) {sum(x > 0) > 1}, prune=TRUE)
 
 #Extract the transpose ASV's table
@@ -106,12 +132,30 @@ physeq_metadata <- data.frame(phyloseq::sample_data(physeq_single),
                        check.names = FALSE
 		       )
 
-#Create the ASV's list from each group that we want show.
+#Create the ASV's list from each group that we want show. One for each group:
 ASVlist_physeq_groupA = colnames(physeq_asvtable[physeq_metadata$Variable == "A", 
 			apply(physeq_asvtable[physeq_metadata$Variable == "A",], MARGIN=2, function(x) any(x >0))])
 
+#To create automatically the previous step:
+#Create a vector with all the group of the variable
+list<-levels(metadata_elu$Varible)
+
+#Make one variable for each group
+for (group in list) {
+    name<-paste("ASVlist_phyloseq_", group, sep="")
+    assign(name, colnames(physeq_asvtable[physeq_metadata$Variable == group, apply(physeq_asvtable[physeq_metadata$Variable == group,], MARGIN=2, function(x) any(x >0))]))
+}
+
 #Create the data for the graph
 data_upset = list(A=ASVlist_physeq_groupA,B=ASVlist_physeq_groupB)
+
+#To create automatically the previous step:
+data_upset<-""
+for (group in list) {
+    name<-paste("ASVlist_phyloseq_", group, sep="")
+    to_add= paste(group,"=",name, sep="")
+    data_upset<-c(data_upset,to_add )
+}
 
 #Calculate all combinations
 combinations_upset = make_comb_mat(data_upset)
@@ -121,6 +165,7 @@ combinations_upset = make_comb_mat(data_upset)
 Variables to change:
 * 120 <- minimum of interactions to show.
 * ylim <- te minimum and max of the total asv by sample.
+
 ```{.r}
 #Create the graph
 upset_graph<-UpSet[comb_size(combinations_upset) >= 120],comb_order = rev(order(comb_size(combinations_upset[comb_size(
@@ -142,4 +187,7 @@ decorate_annotation("Intersection\nsize", {
 })
 dev.off()
 ```
+
+</p>
+</details>
 
