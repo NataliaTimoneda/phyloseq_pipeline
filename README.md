@@ -191,3 +191,60 @@ dev.off()
 </p>
 </details>
 
+## Barplot
+
+Make barplots with a phyloseq object is dificult if you want to join samples, because the  merge_samples function sum the ASV's table numbers, don't do the mean.
+The solution is work with dtaframes, and make the plot with ggplot2.
+<img src="https://user-images.githubusercontent.com/25608100/125616574-340877d3-be0c-485e-b266-4aa6df836f64.png" width="600" />
+
+<details><summary> The code</summary>
+<p>
+
+The input is a phyloseq object normalized. physeq_norm
+
+```{.r}
+#Join all the data in one varible (ASV's table, metadata & taxa
+ data <- psmelt(physeq_norm)
+#Convert the varible Spece to character, or the taxa level interest
+ data$spe <- as.character(data$Level_8)
+#Create a dataframe, columns: interest variables & all taxonomy
+ Spec_abundance <- aggregate(Abundance~Sample+Level_8+Variable1+Variable2+VariableN, data, FUN=sum)
+ abund_table2 <- cast(Spec_abundance, Sample+Variable1+VariableN ~ Level_8)
+# Choose the rownames(Sample)
+ rownames(abund_table2)<-abund_table2[,1]
+#Create a vector and transform to a dataframe all the variables, except the taxonomy.
+ vector<-abund_table2[,1:3] 
+ vector<- as.data.frame(vector)
+#Delete the no taxonomy columns, and sort by decreasing order
+ x<-abund_table2[,-1:-3]/rowSums(abund_table2[,-1:-3]) 
+ x<-x[,order(colMeans(x),decreasing=TRUE)]
+#N: Number of taxa we want to plot
+ N<-20
+#Extract the taxa names to plot
+ taxa_list<-colnames(x)[1:N]
+#Delete if there are a Unassingnable/Unknown taxa
+ taxa_list<-taxa_list[!grepl("Unassignable",taxa_list)]
+#Extract the lenght taxa
+ N<-length(taxa_list)
+#Create data frame with the taxa interest and other
+ new_x<-data.frame(x[,colnames(x) %in% taxa_list],Others=rowSums(x[,!colnames(x) %in% taxa_list])) 
+ new_x<-setDT(new_x, keep.rownames = "Sample")[]
+#Add the variables of interest
+ new_x <- merge(new_x,vector,by="Sample")
+#Create the data frame respect the interest varible(Variable1, and calcualte the mean.(21  depends of the number of taxa,  N+1,check new_x[,2:21] are all the taxa + other)
+ new_y<-aggregate(new_x[,2:21], list(new_x$Variable1, mean
+ )
+#Melt dataframe for plot
+ mydf.molten <- melt(new_y, value.name="Count", variable.name="Taxonomy", na.rm=TRUE)
+#If you need change the order of the variable
+ mydf.molten$Group.1 <- factor(mydf.molten$Group.1, levels= c("GroupA", "GroupB","GroupB"))
+
+#Create the plot with ggplot2
+ png("graph/barplot/v2/barplot_small_perkinsids.png",height=800,width=1400,res=150)
+ ggplot(mydf.molten, aes(x=Group.1, y=Count, fill=Class))+geom_bar(stat="identity")
+ dev.off()
+
+```
+
+</p>
+</details>
