@@ -61,7 +61,7 @@ In this example we compare the betadiversity and mark each sample with 3 variabl
 
 <img src="https://user-images.githubusercontent.com/25608100/125424544-a06d6c55-cfcc-462d-9c7a-789eff2d7beb.png" width="600" />
 
-<details><summary> The code</summary>
+<details><summary> Click to see the code</summary>
 <p>
 
 ```{.r}
@@ -92,7 +92,7 @@ The input is a phyloseq object with data normalize and delete the samples with n
 
 <img src="https://user-images.githubusercontent.com/25608100/125425991-770d7280-fc86-4de0-94b0-af6561b5bde3.png" width="600" />
 
-<details><summary> The code</summary>
+<details><summary>Click to see the code</summary>
 <p>
 
 You can change the color and the shape of each point, and add a label.
@@ -115,7 +115,7 @@ Complete inforamation: https://jokergoo.github.io/ComplexHeatmap-reference/book/
 
 ![upset_locations](https://user-images.githubusercontent.com/25608100/124742211-c610cc00-df1c-11eb-82a1-28b4f61600cc.png)
 
-<details><summary> The code</summary>
+<details><summary>Click to see the code</summary>
 <p>
 
 #### Prepare the data from pyloseq object
@@ -197,7 +197,7 @@ Make barplots with a phyloseq object is dificult if you want to join samples, be
 The solution is work with dtaframes, and make the plot with ggplot2.
 <img src="https://user-images.githubusercontent.com/25608100/125616574-340877d3-be0c-485e-b266-4aa6df836f64.png" width="600" />
 
-<details><summary> The code</summary>
+<details><summary>Click to see the code</summary>
 <p>
 
 The input is a phyloseq object normalized. physeq_norm
@@ -245,6 +245,158 @@ The input is a phyloseq object normalized. physeq_norm
  dev.off()
 
 ```
+</p>
+</details>
 
+## Heatmaps
+The input to make a heatmap is a phyloseq object normalized.
+
+<img src="https://user-images.githubusercontent.com/25608100/125774092-85f94386-7500-4c51-806c-71ffd4aed1cb.png" width="600" />
+
+<details><summary>Click to see the code</summary>
+<p>
+
+```{.r}
+#Prepare the data.
+#If ypu want only a certain number of taxa
+physeq_norm_tmp = prune_taxa(names(sort(taxa_sums(physeq_norm), TRUE))[1:6], physeq_norm)
+#Extract the ASV's table
+data_table<-t(otu_table(physeq_norm_tmp))
+
+# Change the name of the samples and and ASV by taxonomic level interest (Level_8)
+setDT(file_taxa, keep.rownames = TRUE)[]
+setDT(file_metadata, keep.rownames = TRUE)[]
+colnames(data_table)=file_taxa$Level_8[match(colnames(data_table), file_taxa$rn)]
+rownames(data_table)=file_metadata$graph_id[match(rownames(data_table), file_metadata$rn)]
+
+# Create the columns colors with the labels of diferent variables. No limit
+vector<-rownames(sample_data(physeq_norm))
+vector1<-data.frame(vector,sample_data(physeq_norm)$Variable1)
+vector2<-data.frame(vector,sample_data(physeq_norm)$Variable2)
+vector3<-data.frame(vector,sample_data(physeq_norm)$Variable3)
+
+new1<-gsub("GroupA", "#1e7e00ff", vector1$sample_data.physeq_norm..Variable1)
+new1<-gsub("GroupB", "#88f864ff", new1)
+
+new2<-gsub("GroupA", "#880000ff", vector2$sample_data.physeq_norm..Variable2)
+new2<-gsub("GroupB", "#f40b0bff", new2)
+new2<-gsub("GroupC", "#fc7700ff", new2)
+new2<-gsub("GroupD", "#f1ff00ff", new2)
+new2<-gsub("GroupE", "#ca9b00ff", new2)
+
+new3<-gsub("GroupA", "#0c0eabff", vector3$sample_data.physeq_norm..Variable3)
+new3<-gsub("GroupB", "#5de6ffff", new3)
+new3<-gsub("GroupC", "#0c7aabff", new3)
+
+#Prepare the columns
+rlab=t(cbind(new1,new2,new3))
+rownames(rlab)=c("Name_Variable1","Name_Variable2","Name_Variable3")
+
+#Choose the rank color and number of diferents color in rank
+colfunc <- colorRampPalette(c("#dbe2af", "#7a002d"))
+col=colfunc(15)
+#choose the function to the dendogram
+mydist=function(c) {dist(c,method="euclidian")}
+myclust=function(c) {hclust(c,method="average")}
+
+#Create the heatmap graph.
+png("graph/heatmap_L8.tax.png",height=1800,width=1400,res=150)
+heatmap.3 (as.matrix((data_table)), hclustfun=myclust, distfun=mydist, scale="none", dendrogram="row",
+	  Rowv=TRUE, RowSideColors=rlab, col=colfunc(15), key=FALSE, lwid = c(0.2,1), lhei = c(0.3,1),
+	  margins=c(18,7),na.color = "white",main="Dinos taxonomy",cexCol=1.5)
+	  
+legend ("top", legend = c("GroupA", "GroupB", "", "GroupA", "GroupB", "GroupC",
+       "GroupA", "GroupB", "GroupC", "GroupD", "GRoupE"),
+       fill = c("#1e7e00ff", "#88f864ff", "white", "#5de6ffff", "#0c7aabff",
+       "#0c0eabff", "#880000ff", "#f40b0bff", "#fc7700ff", "#f1ff00ff","#ca9b00ff"),
+       border=FALSE, bty="n", y.intersp = 1, cex=1,ncol=2)
+dev.off()
+
+```
+</p>
+</details>
+
+## IndVal
+Calculates the indicator value (fidelity and relative abundance) of species in clusters or types.
+
+To see if there are significance diference between groups, first calculate ANOSIM, to explore if there are diference betwwen groups. If this results is positive, the next step is explore if there any speceies that explain the groups individually, with the IndVal indicator.
+
+The output could be the value of the index or you can make a graph
+<img src="https://user-images.githubusercontent.com/25608100/125779322-886e57db-06db-4b0f-91b5-fc0002fd981f.png" width="600" />
+
+<details><summary>Click to see the code</summary>
+<p>
+
+```{.r}
+
+#Calculate ANOSIM
+#The input is a phylosep normalize with the taxonomy we want to test, and the Variable1 is the grouping variable.
+data_anosim<-get_variable(physeq_tax_norm, 'Variable1')
+anosim_variable <-anosim(phyloseq::distance(physeq_tax_norm, "bray", weighted=FALSE),data_anosim)
+
+#Calcualte the ANOSIM by pairs
+list<-levels(sample_data(physeq_tax_norm)$Variable1)
+for (group in list) {
+    for (i in 2:length(list)-1){
+        for (j in (i+1):length(list)-1){
+ 	    cat ("Anosim with the groups:",(list[i]),(list[j+1]),"\n")
+ 	    vec<-c(list[i], list[i+1])
+ 	    physeq_pair<-subset_samples(physeq_tax_norm, Variable1 %in% c(vec))
+ 	    data_anosim<-get_variable(physeq_pair, 'Varaible1')
+ 	    anosim_pair <-anosim(phyloseq::distance(physeq_pair, "bray", weighted=FALSE),data_anosim , permutations = 999)
+	    print(anosim_pair)
+	}
+    }
+}
+
+
+#Calculate IndVal
+#Extract the sample data, transform rownames to column, extract a data frame with sample names & Varible to group.
+inf<-sample_data(physeq_norm)
+inf$samples<-rownames(inf)
+info_group<-cbind(inf$samples, inf$Variable1)
+info_group<-data.frame(info_group)
+
+#Exrtact the ASV's table
+ASV_table<-t(otu_table(physeq_morm))
+
+#Calculate IndVal
+iva<-indval(ASV_table, info_group$X2)
+
+#Select and order by IndVal index
+gr <- iva$maxcls[iva$pval<=0.05]
+iv <- iva$indcls[iva$pval<=0.05]
+pv <- iva$pval[iva$pval<=0.05]
+fr <- apply(samples[,-1]>0, 2, sum)[iva$pval<=0.05]
+indvalsummary <- data.frame(group=gr, indval=iv, pvalue=pv, freq=fr)
+indvalsummary <- indvalsummary[order(indvalsummary$group, -indvalsummary$indval),]
+
+#Make graph
+#Extract the info &  convert rownames to column
+infoind<-indvalsummary
+setDT(infoind, keep.rownames = TRUE)[]
+#If you want to change the name of the ASV
+infoind$rn <- revalue(infoind$rn, c("asvXXX"= "asvXXX: specie taxonomic name"))
+#If you want to change the name of the groups. (this inforamtion is in info_group and inf$Variable1)
+infoind$group<-c("Group1","Group1","Group2","Group2","Group2","Group3","Group4","Group3","Group5","Group5")
+
+#Create graph
+png("graph/indval.png",height=1200,width=1200,res=180)
+ggplot(infoind, aes(x=indval, y=rn)) +scale_color_manual(values = allGroupsColors.indval)+
+  geom_segment( aes(y=rn, yend=rn, x=0, xend=indval), color="grey") +
+  geom_point( aes(colour = factor(group)), size=6) +
+  theme_light() +
+  theme(
+    axis.text=element_text(size=12),
+    panel.grid.major.x = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.x = element_blank()
+  ) +
+  xlab("indval") +
+  ylab("Taxonomy")+  labs(colour = "Variable1")
+
+dev.off()
+
+```
 </p>
 </details>
