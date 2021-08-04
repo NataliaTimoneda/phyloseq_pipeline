@@ -400,3 +400,33 @@ dev.off()
 ```
 </p>
 </details>
+
+
+## Rarefaction curves
+
+Rarefaction is a technique to assess species richness from the results of sampling. Rarefaction allows the calculation of species richness for a given number of individual samples, based on the construction of so-called rarefaction curves. This curve is a plot of the number of species as a function of the number of samples. Rarefaction curves generally grow rapidly at first, as the most common species are found, but the curves plateau as only the rarest species remain to be sampled.
+
+<img src="https://user-images.githubusercontent.com/25608100/128220692-5cddd7dc-0f3d-476c-a231-de870d6f77c5.png" width="600" />
+
+<details><summary>Click to see the code</summary>
+<p>
+
+```{.r}
+
+# Calculate the cures for each samples.
+Parameters:
+ * step: Step Size for sample size in rarefaction curves
+ * se : default 'TRUE'. Logical. Should standard errors be calculated.
+ * xlim: Ddelimitate the x axis.
+
+
+rare_par<-ggrare(physeq_object, step=10, plot=TRUE)+ xlim(0, 500)
+
+png("graph/rarefaction_curve.png",height=1200,width=1200,res=180)
+rare_par
+dev.off()
+```
+</p>
+</details>
+
+
