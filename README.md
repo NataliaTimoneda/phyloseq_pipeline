@@ -429,4 +429,58 @@ dev.off()
 </p>
 </details>
 
+## Boxes, treemap.
 
+A treemap is a space-filling visualization of hierarchical structures. To take acount that represents medians of a group of samples.
+The input to make a treemap/boxes is a phyloseq object normalized and glom (join the asv with the same taxa in the interest taxa level, and join the samples with goups we want to compare, (Location, Bloom, Year...)
+
+<img src="https://user-images.githubusercontent.com/25608100/140530653-fd07180a-55ce-4659-b9f0-967d4b394879.png" width="600" />
+
+<details><summary>Click to see the code</summary>
+<p>
+
+```{.r}
+
+#Transform the data
+#Extract the asv table
+table_physeq_norm_glom_group<-(otu_table(physeq_norm_glom_group))
+
+#Recover the taxa names
+setDT(file_taxa, keep.rownames = TRUE)[]
+colnames(table_physeq_norm_glom_group)=file_taxa$Level_8[match(colnames(table_physeq_norm_glom_group), file_taxa$rn)]
+
+#For change the names manually
+# See the default names
+colnames(table_physeq_norm_glom_group)
+#Change the names
+colnames(table_physeq_norm_glom_group)[1]  <-"New name for taxa 1"
+colnames(table_physeq_norm_glom_group)[2]  <-"New name for taxa 2"
+colnames(table_physeq_norm_glom_group)[6]  <-"New name for taxa 6"       
+
+#Transform to data frame
+table_tree<-as.data.frame.table(table_physeq_norm_glom_group)
+
+# Create the graph
+## Index: variable/s for agregation, in order. (Var1, Var2)
+## vSize: variable that specifies the sizes of the rectangles. (Freq)
+## vColor: variable that  determines the colors of the rectangle. (Var2)
+
+
+png(filename="graph/tree.png",width=2000, height=1200, res=150)
+
+treemap(,
+            index=c("Var1","Var2"),
+            vSize="Freq",
+	    vColor="Var2",
+	    fontface.labels =c("italic","italic","italic"),
+            type="categorical",
+	    #title="Title graph",
+	    align.labels = list(c("center", "top"), c("center", "center")),
+	    palette="Set3",
+	    title.legend="Title legend",
+	    )
+dev.off()
+
+```
+</p>
+</details>
