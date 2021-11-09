@@ -484,3 +484,73 @@ dev.off()
 ```
 </p>
 </details>
+
+## LEfSe
+
+LEfSe (Linear discriminant analysis Effect Size) determines the features (organisms, clades, operational taxonomic units, genes, or functions) most likely to explain differences between classes by coupling standard tests for statistical significance with additional tests encoding biological consistency and effect relevance.
+
+Is necessary run python scripts in the terminal. The scrips are in: 
+https://github.com/biofuture/MetaP/tree/master/bin/LEfSe
+
+The input is a phyloseq object, glom at taxonomic level of interest.
+
+<img src="https://user-images.githubusercontent.com/25608100/140905950-12b1c8ea-8a8b-4d94-a41a-c365c8b6433c.png" width="800" />
+
+<details><summary>Click to see the code</summary>
+<p>
+
+```{.r}
+
+glom_physeq <- tax_glom(physeq_object, taxrank = "Level_8")
+
+lefse.tbl <- lefse(glom_physeq, class= "variable_grouping",levels= "Level_8")
+```
+
+```console
+# Terminal
+
+sed 's/,/./g' lefse.txt > lefse.v2.tbl
+python format_input.py lefse.v2.tbl lefse.level8_grouping.in -c1  -o -1000000
+run_lefse.py  lefse.level8_grouping.in  lefse.level8_grouping.res -a 0.05 -w 0.05 -l 4.5 -e 0 -y 0 -s 0
+
+# Parameters of format_input.py
+
+# -c [1..n_feats]       set which feature use as class (default 1)
+# -o float              set the normalization value (default -1.0 meaning no normalization)
+
+# Parameters of run_lefse.py
+
+# -a float        set the alpha value for the Anova test (default 0.05)
+# -w float        set the alpha value for the Wilcoxon test (default 0.05)
+# -l float        set the threshold on the absolute value of the logarithmic LDA score (default 2.0)
+# -e int          set whether perform the wilcoxon test only among the
+#                 subclasses with the same name (default 0)
+# -y {0,1}        (for multiclass tasks) set whether the test is performed in
+#                 a one-against-one ( 1 - more strict!) or in a one-against-
+#                 all setting ( 0 - less strict) (default 0)
+# -s {0,1,2}      set the multiple testing correction options. 0 no correction
+#                 (more strict, default), 1 correction for independent
+```
+
+```{.r}
+
+## Create the graph
+
+out_lefse <- read.table(file ="lefse.level8_grouping.res", sep = "\t",na.strings="-")
+out_lefse$taxon     <- out_lefse$V1
+out_lefse$lda       <- out_lefse$V4
+out_lefse$direction <- out_lefse$V3
+out_lefse$p.value   <- out_lefse$V5
+out_lefse$taxon     <- factor(out_lefsetaxon,
+		       levels = out_lefse$taxon[order(out_lefse$direction, out_lefse$lda)])
+out_lefse           <- out_lefse %>% filter(lda > 4.5)
+
+png(paste("graph/lefse.png"),height=400,width=1400,res=150)
+ggplot(out_lefse, aes(x = taxon, y = lda, fill = direction)) + geom_bar(stat = "identity") +
+      coord_flip() + theme(legend.position = "bottom")
+dev.off()
+
+```
+</p>
+</details>
+
