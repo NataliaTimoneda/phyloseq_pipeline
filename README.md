@@ -556,8 +556,8 @@ dev.off()
 
 
 ## ENVO codes
-sea -> ENVO:00000016
-marine biome -> ENVO:00000447
-sea coast -> ENVO:00000303
-artificial harbor -> ENVO:00000464
+sea -> ENVO:00000016 <\br>
+marine biome -> ENVO:00000447 <\br>
+sea coast -> ENVO:00000303 <\br>
+artificial harbor -> ENVO:00000464 <\br>
 
