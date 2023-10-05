@@ -564,3 +564,5 @@ sea coast -> ENVO:00000303
 
 artificial harbor -> ENVO:00000464 
 
+Beach -> ENVO:00000091
+
