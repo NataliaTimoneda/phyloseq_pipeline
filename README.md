@@ -190,7 +190,16 @@ dev.off()
 
 </p>
 </details>
-
+### Another option
+Direct from the phyloseq object:
+```{.r}
+library(MicrobiotaProcess)
+upsetda <- get_upset(obj=physeq_object, factorNames="Group")
+upset(upsetda, sets=unique(as.vector(sample_data(physeq_object)$Group)), 
+      sets.bar.color = "#56B4E9",
+      order.by = "freq", 
+      empty.intersections = "on"
+```
 ## Barplot
 
 Make barplots with a phyloseq object is dificult if you want to join samples, because the  merge_samples function sum the ASV's table numbers, don't do the mean.
