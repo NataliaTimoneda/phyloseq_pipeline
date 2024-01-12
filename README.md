@@ -187,9 +187,6 @@ decorate_annotation("Intersection\nsize", {
 })
 dev.off()
 ```
-
-</p>
-</details>
 ### Another option
 Direct from the phyloseq object:
 ```{.r}
@@ -200,6 +197,9 @@ upset(upsetda, sets=unique(as.vector(sample_data(physeq_object)$Group)),
       order.by = "freq", 
       empty.intersections = "on"
 ```
+	
+</p>
+</details>
 ## Barplot
 
 Make barplots with a phyloseq object is dificult if you want to join samples, because the  merge_samples function sum the ASV's table numbers, don't do the mean.
