@@ -563,7 +563,21 @@ dev.off()
 </p>
 </details>
 
-
+## Venn diagram
+Make Venn diagram of shared taxa (ASVs, OTUs) across sample groups from a phyloseq object. 
+```{.r}
+#library
+remotes::install_github("Russel88/MicEco")
+library("MicEco")
+ps_euler(physeq_object,"variable_compare", quantities = list(type=c("percent","counts"), font = 2), fill = c("#5e89d1","#72d5d3","#6396a8"), labels = list(cex = 1))
+#extract list in common/unic
+list_all<-ps_venn(physeq_object,"variable_compare",plot=FALSE)
+vec_all3<-list_all$`Firsts phase__Second phase__Third phase`
+tax_table <- tax_table(physeq_object)
+install.packages("openxlsx")
+library(openxlsx)	
+write.xlsx(selected_taxonomy_para, file = "taxonomy_incomon_para.xlsx", rowNames = FALSE)
+```
 ## ENVO codes
 sea -> ENVO:00000016
 
