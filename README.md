@@ -578,6 +578,17 @@ install.packages("openxlsx")
 library(openxlsx)	
 write.xlsx(selected_taxonomy_para, file = "taxonomy_incomon_para.xlsx", rowNames = FALSE)
 ```
+## Others
+Extract only 1 ASV by the identifier
+```{.r}
+physeq_asv111 <- subset_taxa(physeq_norm, "asv111", TRUE)
+asv_names <- taxa_names(physeq_norm)
+asv111_index <- which(otu_names == "asv111")
+physeq_asv111 <- prune_taxa(otu_names[asv111_index], physeq_norm)
+
+```
+
+
 ## ENVO codes
 sea -> ENVO:00000016
 
