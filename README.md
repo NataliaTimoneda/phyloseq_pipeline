@@ -32,6 +32,7 @@ library("ampvis2")
 library(metagMisc)
 library(VennDiagram)
 library("corrplot")
+library(ggrepel)
 ```
 </p>
 </details>
