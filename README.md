@@ -676,7 +676,7 @@ write.xlsx(selected_taxonomy_para, file = "taxonomy_incomon_para.xlsx", rowNames
 ```
 ## Bubble 
 The input is a dataframe, if it's a phyloseq object, glom at taxonomic level of interest, and psmelt.
-<img src="images/bubble_plot.png" width="400" />
+<img src="images/bubble_plot.png" width="600" />
 
 <details><summary>Click to see the code</summary>
 <p>
@@ -699,6 +699,7 @@ ggplot(input_bubble %>% filter(Abundance > 0), aes(x = Data, y = Interes, size =
 ```
 </p>
 </details>
+
 ## Others
 Extract only 1 ASV by the identifier
 ```{.r}
