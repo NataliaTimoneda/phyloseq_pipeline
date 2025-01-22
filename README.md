@@ -659,6 +659,9 @@ dev.off()
 
 ## Venn diagram
 Make Venn diagram of shared taxa (ASVs, OTUs) across sample groups from a phyloseq object. 
+<img src="images/venn_diagram.png" width="400" />
+
+
 ```{.r}
 #library
 remotes::install_github("Russel88/MicEco")
