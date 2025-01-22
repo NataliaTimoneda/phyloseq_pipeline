@@ -661,7 +661,6 @@ dev.off()
 Make Venn diagram of shared taxa (ASVs, OTUs) across sample groups from a phyloseq object. 
 <img src="images/venn_diagram.png" width="400" />
 
-
 ```{.r}
 #library
 remotes::install_github("Russel88/MicEco")
@@ -675,6 +674,30 @@ install.packages("openxlsx")
 library(openxlsx)	
 write.xlsx(selected_taxonomy_para, file = "taxonomy_incomon_para.xlsx", rowNames = FALSE)
 ```
+## Bubble 
+The input is a dataframe, if it's a phyloseq object, glom at taxonomic level of interest, and psmelt.
+<img src="images/bubble_plot.png" width="400" />
+
+<details><summary>Click to see the code</summary>
+<p>
+
+```{.r}
+#Prepare data
+glom_phyloseq<- tax_glom(phyloseq_object,  taxrank = "Level_XX", NArm=FALSE)
+input_bubble <- psmelt(glom_phyloseq)
+
+#Make plot
+ggplot(input_bubble %>% filter(Abundance > 0), aes(x = Data, y = Interes, size = Abundance, color = Feature_1)) +
+  	geom_point(alpha = 0.7, position = position_dodge(width = 0.5)) +
+	scale_x_date(date_breaks = "4 days", date_labels = "%m-%d") +
+   	facet_grid(Feature_2~Feature_3, scales="free", space = "free") + 
+    	labs(title= "",x = "", y = "") +
+  	theme_light() +
+  	theme(legend.position="bottom",axis.text.x = element_text(angle = 90, hjust = 1), legend.title = element_blank(),
+		panel.grid.major.x = element_blank(), panel.grid.minor.y = element_blank(), panel.grid.minor.x = element_blank())
+
+```
+
 ## Others
 Extract only 1 ASV by the identifier
 ```{.r}
@@ -682,10 +705,7 @@ physeq_asv111 <- subset_taxa(physeq_norm, "asv111", TRUE)
 asv_names <- taxa_names(physeq_norm)
 asv111_index <- which(otu_names == "asv111")
 physeq_asv111 <- prune_taxa(otu_names[asv111_index], physeq_norm)
-
 ```
-
-
 ## ENVO codes
 sea -> ENVO:00000016
 
