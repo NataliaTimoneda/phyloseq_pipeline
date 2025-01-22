@@ -697,7 +697,8 @@ ggplot(input_bubble %>% filter(Abundance > 0), aes(x = Data, y = Interes, size =
 		panel.grid.major.x = element_blank(), panel.grid.minor.y = element_blank(), panel.grid.minor.x = element_blank())
 
 ```
-
+</p>
+</details>
 ## Others
 Extract only 1 ASV by the identifier
 ```{.r}
