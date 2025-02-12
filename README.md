@@ -53,6 +53,10 @@ TAXtable = tax_table(taxa_tmp)
 
 physeq_object  = merge_phyloseq(OTUtable,metadata,TAXtable)
 ```
+If you need to change a specific taxa name.
+```{.r}
+tax_table(phyloseq_object)["asvXX", "Level_x"] <- "new_name"
+```
 If you need to delete samples by the metadata. 
 
 ```{.r}
@@ -62,7 +66,7 @@ Merge data, by variable in sample_data.
 ```{.r}
 merged_ps <- merge_ps_samples(physeq_object, grouping = "Variable")
 ```
-<details><summary> Click to see the code of the function</summary>
+<details><summary> Click to see the code of the function "merge_ps_samples"</summary>
 <p>
 
 ```{.r}
