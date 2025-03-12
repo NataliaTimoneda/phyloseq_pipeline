@@ -36,7 +36,8 @@ library(ggrepel)
 library(dplyr)
 library(ggalluvial)
 library("ggh4x")
-
+library(ggalluvial)
+library(tidyr)
 ```
 </p>
 </details>
@@ -53,16 +54,17 @@ TAXtable = tax_table(taxa_tmp)
 
 physeq_object  = merge_phyloseq(OTUtable,metadata,TAXtable)
 ```
-If you need to change a specific taxa name.
+### Modify data
+#### If you need to change a specific taxa name.
 ```{.r}
 tax_table(phyloseq_object)["asvXX", "Level_x"] <- "new_name"
 ```
-If you need to delete samples by the metadata. 
+#### If you need to delete samples by the metadata. 
 
 ```{.r}
 physeq_v2 = subset_samples(physeq_object, column_name != "variable")
 ```
-Merge data, by variable in sample_data.
+#### Merge data, by variable in sample_data.
 ```{.r}
 merged_ps <- merge_ps_samples(physeq_object, grouping = "Variable")
 ```
@@ -152,6 +154,27 @@ merge_ps_samples <- function(ps, grouping){
 </p>
 </details>
 
+#### Transform data for plot by axis_sec (ggplot2)
+Easy way, multiple or divide.
+
+```{.r}
+data$varible_adjust <- data$variable /10
+ggplot(......)+
+	scale_y_continuous(sec.axis = sec_axis(~ . *10, name = "Label"))
+```
+Change scale and breaks.
+```{.r}
+#25<- ymax axis y
+#12<- ymin axis y
+#38.5 <- ymax sec_axis y
+#37.5 <- ymin sec_axis y
+
+data$varible_adjust<- ifelse(data$variable > 25, 
+                                data$variable * ((25 - 12) / (38.5 - 37.5)), 
+                                data$variable)
+ggplot(......)+
+	scale_y_continuous(sec.axis = sec_axis(~ ((. - 12) * (38.5 - 37.5) / (25 - 12)) + 37.5, name = "Label"))
+```
 ## Alpha & Beta diversity
 
 In this example we want to compare the alpha diversity between the variable "Depth".
