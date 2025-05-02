@@ -38,6 +38,7 @@ library(ggalluvial)
 library("ggh4x")
 library(ggalluvial)
 library(tidyr)
+library(scales)
 ```
 </p>
 </details>
